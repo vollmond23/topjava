@@ -5,15 +5,15 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
-public class Meal implements Comparable<Meal> {
+public class Meal {
 
-    private final int id;
+    private int id;
 
-    private final LocalDateTime dateTime;
+    private LocalDateTime dateTime;
 
-    private final String description;
+    private String description;
 
-    private final int calories;
+    private int calories;
 
     public Meal(int id, LocalDateTime dateTime, String description, int calories) {
         Objects.requireNonNull(dateTime);
@@ -22,6 +22,10 @@ public class Meal implements Comparable<Meal> {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
+    }
+
+    public Meal(LocalDateTime dateTime, String description, int calories) {
+        this(-1, dateTime, description, calories);
     }
 
     public int getId() {
@@ -48,30 +52,19 @@ public class Meal implements Comparable<Meal> {
         return dateTime.toLocalTime();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Meal meal = (Meal) o;
-
-        if (id != meal.id) return false;
-        if (calories != meal.calories) return false;
-        if (!dateTime.equals(meal.dateTime)) return false;
-        return description.equals(meal.description);
+    public void setId(int id) {
+        this.id = id;
     }
 
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + dateTime.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + calories;
-        return result;
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 
-    @Override
-    public int compareTo(Meal o) {
-        return dateTime.compareTo(o.getDateTime());
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCalories(int calories) {
+        this.calories = calories;
     }
 }

@@ -1,10 +1,7 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
-import ru.javawebinar.topjava.model.Counter;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.storage.MealsListStorage;
-import ru.javawebinar.topjava.storage.MealsMapStorage;
 import ru.javawebinar.topjava.storage.Storage;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.TimeUtil;
@@ -24,8 +21,7 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-//        storage = new MealsMapStorage(MealsUtil.getMealsMap());
-        storage = new MealsListStorage(MealsUtil.getMealsList());
+        storage = MealsUtil.getMealsMapStorage();
     }
 
     @Override
@@ -35,13 +31,17 @@ public class MealServlet extends HttpServlet {
         int calories = Integer.parseInt(request.getParameter("calories"));
         LocalDateTime dateTime = TimeUtil.parse(request.getParameter("date_time"));
         String description = request.getParameter("description");
-        final boolean isCreate = (id == null || id.length() == 0);
+        boolean isCreate = false;
+        if (id == null || id.length() == 0) {
+            isCreate = true;
+            id = "-1";
+        }
+        Meal meal = new Meal(Integer.parseInt(id), dateTime, description, calories);
         if (isCreate) {
-            Meal meal = new Meal(Counter.get(), dateTime, description, calories);
             storage.save(meal);
             log.debug("New meal with id = " + meal.getId() + " was added");
         } else {
-            storage.update(new Meal(Integer.parseInt(id), dateTime, description, calories));
+            storage.update(meal);
             log.debug("Meal with id = " + id + " was edited");
         }
         response.sendRedirect("meals");

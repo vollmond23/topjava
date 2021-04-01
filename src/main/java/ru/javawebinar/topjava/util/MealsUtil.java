@@ -1,8 +1,8 @@
 package ru.javawebinar.topjava.util;
 
-import ru.javawebinar.topjava.model.Counter;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.storage.MealsMapStorage;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,18 +14,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MealsUtil {
-    private static final List<Meal> MEALS_LIST = Arrays.asList(
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.FEBRUARY, 1, 8, 0), "Завтрак", 1000),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.FEBRUARY, 1, 13, 30), "Обед", 500),
-            new Meal(Counter.get(), LocalDateTime.of(2020, Month.FEBRUARY, 1, 19, 0), "Ужин", 410)
-    );
+
+    private static final MealsMapStorage mealsMapStorage = new MealsMapStorage();
+    static {
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.FEBRUARY, 1, 8, 0), "Завтрак", 1000));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.FEBRUARY, 1, 13, 30), "Обед", 500));
+        mealsMapStorage.save(new Meal(LocalDateTime.of(2020, Month.FEBRUARY, 1, 19, 0), "Ужин", 410));
+    }
     private static final int CALORIES_PER_DAY = 2000;
 
     public static void main(String[] args) {
@@ -51,13 +53,11 @@ public class MealsUtil {
     }
 
     public static List<Meal> getMealsList() {
-        return MEALS_LIST;
+        return mealsMapStorage.getAll();
     }
 
-    public static Map<Integer, Meal> getMealsMap() {
-        return getMealsList()
-                .stream()
-                .collect(Collectors.toMap(Meal::getId, meal -> meal));
+    public static MealsMapStorage getMealsMapStorage() {
+        return mealsMapStorage;
     }
 
     public static List<MealTo> refreshMealsList(List<Meal> meals) {
