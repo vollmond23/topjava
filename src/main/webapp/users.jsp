@@ -1,3 +1,4 @@
+<%@ page import="ru.javawebinar.topjava.web.SecurityUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html lang="ru">
 <head>

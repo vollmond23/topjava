@@ -5,8 +5,10 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
+import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 
 @Service
 public class MealService {
@@ -34,6 +36,6 @@ public class MealService {
     }
 
     public List<Meal> getAll() {
-        return repository.getAll();
+        return repository.getAll().stream().filter(meal -> meal.getUserId() == authUserId()).collect(Collectors.toList());
     }
 }

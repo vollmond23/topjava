@@ -49,7 +49,7 @@ public class MealRestController {
 
     public List<MealTo> getAllTos() {
         log.info("getAllTos for user {}", authUserId());
-        return MealsUtil.getTos(service.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return MealsUtil.getTos(getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 
     public List<MealTo> getAllTosFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
@@ -58,6 +58,6 @@ public class MealRestController {
         if (endDate == null) endDate = LocalDate.MAX;
         if (startTime == null) startTime = LocalTime.MIN;
         if (endTime == null) endTime = LocalTime.MAX;
-        return MealsUtil.getFilteredTos(service.getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY, startDate, endDate, startTime, endTime);
+        return MealsUtil.getFilteredTos(getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY, startDate, endDate, startTime, endTime);
     }
 }
