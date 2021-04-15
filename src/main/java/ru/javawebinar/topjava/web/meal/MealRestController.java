@@ -8,6 +8,7 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -37,7 +38,8 @@ public class MealRestController {
         service.delete(id, authUserId());
     }
 
-    public void update(Meal meal) {
+    public void update(Meal meal, int id) {
+        ValidationUtil.assureIdConsistent(meal, id);
         log.info("update {} for user {}", meal, authUserId());
         service.save(meal, authUserId());
     }
@@ -53,11 +55,11 @@ public class MealRestController {
     }
 
     public List<MealTo> getAllTosFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        log.info("getAllTos filtered by date & time for user {}", authUserId());
         if (startDate == null) startDate = LocalDate.MIN;
         if (endDate == null) endDate = LocalDate.MAX;
         if (startTime == null) startTime = LocalTime.MIN;
         if (endTime == null) endTime = LocalTime.MAX;
-        return MealsUtil.getFilteredTos(getAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY, startDate, endDate, startTime, endTime);
+        log.info("getAllTos filtered by date & time for user {}", authUserId());
+        return MealsUtil.getTos(service.getAllFiltered(startDate, endDate, startTime, endTime), MealsUtil.DEFAULT_CALORIES_PER_DAY);
     }
 }
