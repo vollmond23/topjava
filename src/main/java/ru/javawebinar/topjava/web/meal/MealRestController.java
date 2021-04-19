@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
@@ -24,6 +25,7 @@ public class MealRestController {
     private MealService service;
 
     public Meal save(Meal meal) {
+        ValidationUtil.checkNew(meal);
         log.info("create {} for user {}", meal, authUserId());
         return service.save(meal, authUserId());
     }
@@ -60,6 +62,9 @@ public class MealRestController {
         if (startTime == null) startTime = LocalTime.MIN;
         if (endTime == null) endTime = LocalTime.MAX;
         log.info("getAllTos filtered by date & time for user {}", authUserId());
-        return MealsUtil.getTos(service.getAllFiltered(startDate, endDate, startTime, endTime), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        LocalTime finalStartTime = startTime;
+        LocalTime finalEndTime = endTime;
+        return MealsUtil.filterByPredicate(service.getAllFiltered(startDate, endDate), MealsUtil.DEFAULT_CALORIES_PER_DAY,
+                meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), finalStartTime, finalEndTime));
     }
 }

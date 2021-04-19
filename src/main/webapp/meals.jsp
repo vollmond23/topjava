@@ -1,4 +1,3 @@
-<%@ page import="ru.javawebinar.topjava.web.SecurityUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -21,19 +20,19 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
-    <h2>Meals (UserID: <%=SecurityUtil.authUserId()%>)</h2>
+    <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br> <br>
     <div>
         <form action="meals" method="post">
             <label for="startDate">Start date:</label>
-            <input type="date" id="startDate" name="startDate" value="${startDate}">
+            <input type="date" id="startDate" name="startDate" value="<%=request.getParameter("startDate")%>">
             <label for="endDate">End date:</label>
-            <input type="date" id="endDate" name="endDate" value="${endDate}">
+            <input type="date" id="endDate" name="endDate" value="<%=request.getParameter("endDate")%>">
             <label for="startTime">Start time:</label>
-            <input type="time" id="startTime" name="startTime" value="${startTime}">
+            <input type="time" id="startTime" name="startTime" value="<%=request.getParameter("startTime")%>">
             <label for="endTime">End time:</label>
-            <input type="time" id="endTime" name="endTime" value="${endTime}">
+            <input type="time" id="endTime" name="endTime" value="<%=request.getParameter("endTime")%>">
             <button type="submit" name="filterBtn" value="filter">Filter</button>
         </form>
     </div>
