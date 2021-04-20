@@ -27,12 +27,8 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public synchronized Meal save(Meal meal, int userId) {
-        Map<Integer, Meal> mealMap = repository.get(userId);
-        if (mealMap == null) {
-            repository.put(userId, new ConcurrentHashMap<>());
-            mealMap = repository.get(userId);
-        }
+    public Meal save(Meal meal, int userId) {
+        Map<Integer, Meal> mealMap = repository.computeIfAbsent(userId, ConcurrentHashMap::new);
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             mealMap.put(meal.getId(), meal);
@@ -48,13 +44,9 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public synchronized boolean delete(int id, int userId) {
+    public boolean delete(int id, int userId) {
         Map<Integer, Meal> mealMap = repository.get(userId);
-        if (mealMap == null) {
-            return false;
-        }
-        Meal meal = mealMap.get(id);
-        if (meal == null) {
+        if (mealMap == null || mealMap.get(id) == null) {
             return false;
         }
         return mealMap.remove(id) != null;
@@ -63,11 +55,8 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         Map<Integer, Meal> mealMap = repository.get(userId);
-        if (mealMap == null) {
-            return null;
-        }
-        Meal meal = mealMap.get(id);
-        if (meal == null) {
+        Meal meal;
+        if (mealMap == null || (meal = mealMap.get(id)) == null) {
             return null;
         }
         return meal;

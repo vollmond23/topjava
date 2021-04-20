@@ -59,11 +59,9 @@ public class MealRestController {
     public List<MealTo> getAllTosFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         if (startDate == null) startDate = LocalDate.MIN;
         if (endDate == null) endDate = LocalDate.MAX;
-        if (startTime == null) startTime = LocalTime.MIN;
-        if (endTime == null) endTime = LocalTime.MAX;
+        LocalTime finalStartTime = startTime == null ? LocalTime.MIN : startTime;
+        LocalTime finalEndTime = endTime == null ? LocalTime.MAX : endTime;
         log.info("getAllTos filtered by date & time for user {}", authUserId());
-        LocalTime finalStartTime = startTime;
-        LocalTime finalEndTime = endTime;
         return MealsUtil.filterByPredicate(service.getAllFiltered(startDate, endDate), MealsUtil.DEFAULT_CALORIES_PER_DAY,
                 meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), finalStartTime, finalEndTime));
     }
