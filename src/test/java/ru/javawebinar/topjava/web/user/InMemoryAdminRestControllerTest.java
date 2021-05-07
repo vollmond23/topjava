@@ -16,21 +16,24 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class InMemoryAdminRestControllerTest {
     private static final Logger log = LoggerFactory.getLogger(InMemoryAdminRestControllerTest.class);
 
-    private static ConfigurableApplicationContext testCtx;
+    private static ConfigurableApplicationContext repoCtx;
+    private static ConfigurableApplicationContext appCtx;
     private static AdminRestController controller;
     private static InMemoryUserRepository repository;
 
     @BeforeClass
     public static void beforeClass() {
-        testCtx = new ClassPathXmlApplicationContext("test-spring-app.xml");
-        log.info("\n{}\n", Arrays.toString(testCtx.getBeanDefinitionNames()));
-        controller = testCtx.getBean(AdminRestController.class);
-        repository = testCtx.getBean(InMemoryUserRepository.class);
+        repoCtx = new ClassPathXmlApplicationContext("spring-repo-test.xml");
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        log.info("\n{}\n", Arrays.toString(repoCtx.getBeanDefinitionNames()));
+        controller = appCtx.getBean(AdminRestController.class);
+        repository = repoCtx.getBean(InMemoryUserRepository.class);
     }
 
     @AfterClass
     public static void afterClass() {
-        testCtx.close();
+        repoCtx.close();
+        appCtx.close();
     }
 
     @Before
