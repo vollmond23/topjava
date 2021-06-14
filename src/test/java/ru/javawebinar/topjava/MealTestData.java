@@ -11,7 +11,7 @@ import static java.time.LocalDateTime.of;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
-    public static final TestMatcher<Meal> MEAL_MATCHER = TestMatcher.usingIgnoringFieldsComparator();
+    public static final TestMatcher<Meal> MEAL_MATCHER = TestMatcher.usingIgnoringFieldsComparator("user");
 
     public static final int NOT_FOUND = 10;
     public static final int MEAL1_ID = START_SEQ + 2;
@@ -29,8 +29,14 @@ public class MealTestData {
 
     public static final List<Meal> meals = Arrays.asList(meal7, meal6, meal5, meal4, meal3, meal2, meal1);
 
+    static {
+        meals.forEach(meal -> meal.setUser(UserTestData.user));
+        adminMeal1.setUser(UserTestData.admin);
+        adminMeal2.setUser(UserTestData.admin);
+    }
+
     public static Meal getNew() {
-        return new Meal(null, of(2020, Month.FEBRUARY, 1, 18, 0), "Созданный ужин", 300);
+        return new Meal(of(2020, Month.FEBRUARY, 1, 18, 0), "Созданный ужин", 300);
     }
 
     public static Meal getUpdated() {
