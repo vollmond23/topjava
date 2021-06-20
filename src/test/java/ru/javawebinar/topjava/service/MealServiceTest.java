@@ -1,9 +1,9 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -20,6 +20,9 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -35,20 +38,20 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 public class MealServiceTest {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    private static final List<String> allLogs = new ArrayList<>();
+
+    @AfterClass
+    public static void printAllLogs() {
+        allLogs.forEach(System.out::println);
+    }
 
     @Rule
-    public final TestRule watchman = new TestWatcher() {
-        private long time;
-
+    public Stopwatch stopwatch = new Stopwatch() {
         @Override
-        protected void starting(Description description) {
-            time = System.currentTimeMillis();
-        }
-
-        @Override
-        protected void finished(Description description) {
-            time = System.currentTimeMillis() - time;
-            log.info(description.getTestClass().getName() + '.' + description.getMethodName() + ": " + time + " ms");
+        protected void finished(long nanos, Description description) {
+            String time = TimeUnit.NANOSECONDS.toMicros(nanos) + " ms";
+            log.info(time);
+            allLogs.add(description.getTestClass().getName() + '.' + description.getMethodName() + ": " + time);
         }
     };
 
