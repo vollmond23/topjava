@@ -1,24 +1,27 @@
 package ru.javawebinar.topjava.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class UserService {
+
+    @Autowired
+    Environment env;
 
     private final UserRepository userRepository;
     private final MealRepository mealRepository;
@@ -59,12 +62,15 @@ public class UserService {
         checkNotFoundWithId(userRepository.save(user), user.id());
     }
 
-    @Transactional
-    public Map<User, List<Meal>> getWithMeals(int id) {
-        User user = userRepository.get(id);
-        List<Meal> all = mealRepository.getAll(id);
-        Map<User, List<Meal>> result = new HashMap<>();
-        result.put(user, all);
-        return result;
+    public User getWithMeals(int id) {
+        User user = null;
+        if (Arrays.asList(env.getActiveProfiles()).contains("datajpa")) {
+            if ((user = userRepository.get(id)) == null) {
+                return null;
+            }
+            List<Meal> all = mealRepository.getAll(id);
+            user.setMeals(all);
+        }
+        return user;
     }
 }

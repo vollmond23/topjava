@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
@@ -29,7 +30,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 abstract public class AbstractServiceTest {
     private static final Logger log = getLogger("result");
 
-    private static final StringBuilder results = new StringBuilder();
+    private static StringBuilder results;
 
     @Autowired
     CacheManager cacheManager;
@@ -44,6 +45,11 @@ abstract public class AbstractServiceTest {
             log.info(result + " ms\n");
         }
     };
+
+    @BeforeClass
+    public static void clearAll() {
+        results = new StringBuilder();
+    }
 
     @AfterClass
     public static void printResult() {

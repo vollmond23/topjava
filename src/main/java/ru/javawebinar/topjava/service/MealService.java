@@ -1,10 +1,10 @@
 package ru.javawebinar.topjava.service;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
@@ -12,6 +12,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.atStartOfDayOrMin;
@@ -20,6 +21,9 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class MealService {
+
+    @Autowired
+    Environment env;
 
     private final MealRepository mealRepository;
     private final UserRepository userRepository;
@@ -33,7 +37,6 @@ public class MealService {
         return checkNotFoundWithId(mealRepository.get(id, userId), id);
     }
 
-    @CacheEvict(value = "meals", allEntries = true)
     public void delete(int id, int userId) {
         checkNotFoundWithId(mealRepository.delete(id, userId), id);
     }
@@ -42,28 +45,30 @@ public class MealService {
         return mealRepository.getBetweenHalfOpen(atStartOfDayOrMin(startDate), atStartOfNextDayOrMax(endDate), userId);
     }
 
-    @Cacheable("meals")
     public List<Meal> getAll(int userId) {
         return mealRepository.getAll(userId);
     }
 
-    @CacheEvict(value = "meals", allEntries = true)
     public void update(Meal meal, int userId) {
         Assert.notNull(meal, "meal must not be null");
         checkNotFoundWithId(mealRepository.save(meal, userId), meal.id());
     }
 
-    @CacheEvict(value = "meals", allEntries = true)
     public Meal create(Meal meal, int userId) {
         Assert.notNull(meal, "meal must not be null");
         return mealRepository.save(meal, userId);
     }
 
-    @Transactional
+    @Profile("datajpa")
     public Meal getMealWithUser(int id, int userId) {
-        User user = userRepository.get(userId);
-        Meal meal = get(id, userId);
-        meal.setUser(user);
+        Meal meal = null;
+        if (Arrays.asList(env.getActiveProfiles()).contains("datajpa")) {
+            meal = get(id, userId);
+            User user = userRepository.get(userId);
+            if (user != null) {
+                meal.setUser(user);
+            }
+        }
         return meal;
     }
 }

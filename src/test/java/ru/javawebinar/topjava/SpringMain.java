@@ -18,7 +18,7 @@ public class SpringMain {
         // java 7 automatic resource management (ARM)
         try (ClassPathXmlApplicationContext appCtx = new ClassPathXmlApplicationContext()) {
             appCtx.setConfigLocations("spring/spring-app.xml", "spring/spring-db.xml");
-            appCtx.getEnvironment().setActiveProfiles(Profiles.getActiveDbProfile(), Profiles.JDBC);
+            appCtx.getEnvironment().setActiveProfiles(Profiles.getActiveDbProfile(), Profiles.REPOSITORY_IMPLEMENTATION);
             appCtx.refresh();
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));
             AdminRestController adminUserController = appCtx.getBean(AdminRestController.class);
