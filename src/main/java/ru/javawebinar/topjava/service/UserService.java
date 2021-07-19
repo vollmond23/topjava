@@ -1,17 +1,12 @@
 package ru.javawebinar.topjava.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.repository.UserRepository;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
@@ -20,15 +15,10 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 @Service
 public class UserService {
 
-    @Autowired
-    Environment env;
-
     private final UserRepository userRepository;
-    private final MealRepository mealRepository;
 
-    public UserService(UserRepository userRepository, MealRepository mealRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.mealRepository = mealRepository;
     }
 
     @CacheEvict(value = "users", allEntries = true)
@@ -63,14 +53,6 @@ public class UserService {
     }
 
     public User getWithMeals(int id) {
-        User user = null;
-        if (Arrays.asList(env.getActiveProfiles()).contains("datajpa")) {
-            if ((user = userRepository.get(id)) == null) {
-                return null;
-            }
-            List<Meal> all = mealRepository.getAll(id);
-            user.setMeals(all);
-        }
-        return user;
+        return userRepository.getWithMeals(id);
     }
 }

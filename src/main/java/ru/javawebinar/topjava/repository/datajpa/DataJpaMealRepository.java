@@ -49,4 +49,9 @@ public class DataJpaMealRepository implements MealRepository {
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
         return crudMealRepository.getBetweenHalfOpen(startDateTime, endDateTime, userId);
     }
+
+    @Override
+    public Meal getMealWithUser(int id, int userId) {
+        return crudMealRepository.getMealWithUser(id, userId);
+    }
 }
